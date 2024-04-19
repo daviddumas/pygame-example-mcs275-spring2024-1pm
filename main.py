@@ -18,7 +18,7 @@ DISP_HEIGHT = 600
 # Make a "display surface" to draw the game on
 DISPLAYSURF = pygame.display.set_mode((DISP_WIDTH, DISP_HEIGHT))
 DISPLAYSURF.fill(WHITE)
-pygame.display.set_caption("Hello")  # window title / taskbar string
+pygame.display.set_caption("PyGame Example")  # window title / taskbar string
 
 
 # Sprite is a movable, drawable image that is part of the game
