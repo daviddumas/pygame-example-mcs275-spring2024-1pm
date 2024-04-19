@@ -7,3 +7,6 @@ This displays a movable robot sprite controlled by arrow keys.
 ```
 python3 main.py
 ```
+## Contributors
+
+* David Dumas <ddumas@uic.edu>
