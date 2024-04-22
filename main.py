@@ -1,5 +1,6 @@
 import pygame
 from pygame.locals import K_LEFT, K_RIGHT, K_UP, K_DOWN, QUIT
+import random
 
 pygame.init()
 
@@ -57,8 +58,29 @@ class Player(pygame.sprite.Sprite):
     def draw(self, surface):
         surface.blit(self.image, self.rect)
 
+class Robot(pygame.sprite.Sprite):
+    "Sprite representing a robot NPC"
+
+    def __init__(self):
+        super().__init__()
+        self.image = pygame.image.load("RobotNPC.png")
+        self.rect = (
+            self.image.get_rect()
+        )  # rectangular region representing image dimensions
+        self.rect.center = (
+           random.randrange(DISP_WIDTH),
+           random.randrange(DISP_HEIGHT)
+        )  # move the center to display center
+
+    def update(self):
+        pass
+
+    def draw(self, surface):
+        surface.blit(self.image, self.rect)
+
 
 p = Player()
+q = Robot()
 
 # MAIN LOOP
 while True:
@@ -69,10 +91,12 @@ while True:
 
     # Have each sprite update its internal state
     p.update()
+    q.update()
 
     # Clear the display
     DISPLAYSURF.fill(GAME_BG)
     # Draw the sprites
+    q.draw(DISPLAYSURF)
     p.draw(DISPLAYSURF)
 
     # Put the new content on the screen
