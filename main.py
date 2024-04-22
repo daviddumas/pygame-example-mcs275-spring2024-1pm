@@ -9,6 +9,8 @@ GameClock = pygame.time.Clock()  # manages time in the game
 
 # Color constants
 WHITE = (255, 255, 255)
+GRAY = (180,180,180)
+GAME_BG = GRAY
 
 # Display area size (will be window size if windowed)
 DISP_WIDTH = 800
@@ -69,7 +71,7 @@ while True:
     p.update()
 
     # Clear the display
-    DISPLAYSURF.fill(WHITE)
+    DISPLAYSURF.fill(GAME_BG)
     # Draw the sprites
     p.draw(DISPLAYSURF)
 
