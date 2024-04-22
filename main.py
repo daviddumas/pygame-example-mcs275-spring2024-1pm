@@ -80,8 +80,10 @@ class Robot(pygame.sprite.Sprite):
         surface.blit(self.image, self.rect)
 
 
-p = Player()
-q = Robot()
+sprites = []
+sprites.append(Player())
+for _ in range(8):
+    sprites.append(Robot())
 
 # MAIN LOOP
 while True:
@@ -91,14 +93,14 @@ while True:
             exit()
 
     # Have each sprite update its internal state
-    p.update()
-    q.update()
+    for s in sprites:
+        s.update()
 
     # Clear the display
     DISPLAYSURF.fill(GAME_BG)
     # Draw the sprites
-    q.draw(DISPLAYSURF)
-    p.draw(DISPLAYSURF)
+    for s in sprites:
+        s.draw(DISPLAYSURF)
 
     # Put the new content on the screen
     pygame.display.update()
