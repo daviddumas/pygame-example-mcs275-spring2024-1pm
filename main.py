@@ -11,7 +11,7 @@ GameClock = pygame.time.Clock()  # manages time in the game
 WHITE = (255, 255, 255)
 
 # Display area size (will be window size if windowed)
-DISP_WIDTH = 600
+DISP_WIDTH = 800
 DISP_HEIGHT = 600
 
 # Make a "display surface" to draw the game on
