@@ -61,10 +61,11 @@ class Player(pygame.sprite.Sprite):
 
 class Robot(pygame.sprite.Sprite):
     "Sprite representing a robot NPC"
+    SPRITE_FN = "RobotNPC_green.png"
 
     def __init__(self,position=None):
         super().__init__()
-        self.image = pygame.image.load("assets/RobotNPC.png")
+        self.image = pygame.image.load("assets/"+self.SPRITE_FN)
         self.rect = (
             self.image.get_rect()
         )  # rectangular region representing image dimensions
@@ -85,6 +86,7 @@ class Robot(pygame.sprite.Sprite):
 
 class WanderRobot(Robot):
     """NPC robot that moves randomly (up,down,left,right)"""
+    SPRITE_FN = "RobotNPC_purple.png"
 
     # TODO: Make wanderbot speed FPS-independent!
     possible_steps = [  # class attribute
@@ -101,6 +103,7 @@ class WanderRobot(Robot):
 
 class PatrolRobot(Robot):
     """Robot walks back and forth along a straight line segment"""
+    SPRITE_FN = "RobotNPC_orange.png"
 
     state_transitions = {
         "out": "back",
