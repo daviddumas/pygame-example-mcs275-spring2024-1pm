@@ -27,8 +27,9 @@ class Player(pygame.sprite.Sprite):
     "Sprite representing the player"
     SPEED = 250  # in pixels/second
 
-    def __init__(self):
+    def __init__(self,npcs):
         super().__init__()
+        self.npcs = npcs
         self.image = pygame.image.load("assets/Player.png")
         self.image.set_colorkey(WHITE)
         self.rect = (
@@ -54,6 +55,11 @@ class Player(pygame.sprite.Sprite):
         if self.rect.bottom < DISP_HEIGHT:
             if pressed_keys[K_DOWN]:
                 self.rect.move_ip(0, self.SPEED * SPF)
+        
+        # Detect collisions with anything in sprite group self.npcs
+        colliders = pygame.sprite.spritecollide(self,self.npcs,dokill=False)
+        for c in colliders:
+            c.kill()
 
     # draw should accept a surface and put this sprite onto it
     def draw(self, surface):
@@ -80,10 +86,18 @@ class Robot(pygame.sprite.Sprite):
         surface.blit(self.image, self.rect)
 
 
-sprites = []
-sprites.append(Player())
+sprites = [] # list of individual sprites OR sprite groups
+
+robots = pygame.sprite.Group() # behaves like a sprite, but is many
+# Add the player
+sprites.append(Player(robots))
+
+# create the robots
 for _ in range(8):
-    sprites.append(Robot())
+    robots.add(Robot())
+
+# Add the group of all robots
+sprites.append(robots)
 
 # MAIN LOOP
 while True:
