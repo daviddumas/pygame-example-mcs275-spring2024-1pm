@@ -67,23 +67,92 @@ class Player(pygame.sprite.Sprite):
 
 class Robot(pygame.sprite.Sprite):
     "Sprite representing a robot NPC"
+    SPRITE_FN = "RobotNPC_green.png"
 
-    def __init__(self):
+    def __init__(self,position=None):
         super().__init__()
-        self.image = pygame.image.load("assets/RobotNPC.png")
+        self.image = pygame.image.load("assets/"+self.SPRITE_FN)
         self.rect = (
             self.image.get_rect()
         )  # rectangular region representing image dimensions
-        self.rect.center = (
-           random.randrange(DISP_WIDTH),
-           random.randrange(DISP_HEIGHT)
-        )  # move the center to display center
+        if position is None:
+            self.rect.center = (
+            random.randrange(DISP_WIDTH),
+            random.randrange(DISP_HEIGHT)
+            )  # move the center to display center
+        else:
+            self.rect.center = position
 
     def update(self):
         pass
 
     def draw(self, surface):
         surface.blit(self.image, self.rect)
+
+class WanderRobot(Robot):
+    """NPC robot that moves randomly (up,down,left,right)"""
+    SPRITE_FN = "RobotNPC_purple.png"
+
+    # TODO: Make wanderbot speed FPS-independent!
+    possible_steps = [  # class attribute
+        (3, 0),
+        (-3, 0),
+        (0, 3),
+        (0, -3),
+    ]
+
+    def update(self):
+        "Take one step, randomly"
+        step = random.choice(self.possible_steps) # e.g. step=(1,2)
+        self.rect.move_ip(*step)  #   move_ip(1,2)
+
+class PatrolRobot(Robot):
+    """Robot walks back and forth along a straight line segment"""
+    SPRITE_FN = "RobotNPC_orange.png"
+
+    state_transitions = {
+        "out": "back",
+        "back": "out",
+    }
+
+    def __init__(self, position=None, direction=None, steps=80):
+        """
+        Initialize a robot at `position` that takes `steps`
+        steps in `direction` then turns around, repeats.
+        """
+        # Call Robot constructor
+        super().__init__(position)
+        if direction is None:
+            direction = random.choice([
+                (3, 0),
+                (-3, 0),
+                (0, 3),
+                (0, -3),                
+                (3, 3),
+                (-3, 3),
+                (3, -3),
+                (-3, -3),                
+            ])
+        # Do Patrol-specific initialization
+        self.vectors = {
+            "out": direction,
+            "back": (-direction[0],-direction[1]),
+        }
+        self.steps = steps  # constant
+        self.state = "out"  # either "out" or "back"
+        self.n = 0  # number of steps so far in the current state
+
+    def update(self):
+        "Take a step and turn around if appropriate"
+        # Take a step
+        self.rect.move_ip(*self.vectors[self.state])
+        self.n += 1
+        # Is it time to turn around?
+        if self.n == self.steps:
+            # indeed, turn around
+            self.n = 0
+            self.state = self.state_transitions[self.state]
+
 
 
 sprites = [] # list of individual sprites OR sprite groups
@@ -93,8 +162,12 @@ robots = pygame.sprite.Group() # behaves like a sprite, but is many
 sprites.append(Player(robots))
 
 # create the robots
-for _ in range(8):
+for _ in range(5):
     robots.add(Robot())
+for _ in range(5):
+    robots.add(WanderRobot())
+for _ in range(5):
+    robots.add(PatrolRobot())
 
 # Add the group of all robots
 sprites.append(robots)
