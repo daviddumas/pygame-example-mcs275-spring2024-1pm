@@ -50,8 +50,26 @@ class ChargeBar(pygame.sprite.Sprite):
         self.charge = min(self.max, self.charge)
 
     def subtract_charge(self, x):
+        """
+        Remove charge `x` from this bar, or all available charge,
+        whichever is smaller.  Return amount actually removed.
+        """
+        oldcharge = self.charge
         self.charge -= x
         self.charge = max(0, self.charge)
+        return oldcharge - self.charge
+
+    def can_accept(self):
+        return self.max - self.charge
+
+    def transfer_charge(self, other_bar, x):
+        """
+        Send charge `x` to `other_bar` (a chargebar), reducing that amount
+        as needed to make this possible.
+        """
+        x = min(x, other_bar.can_accept())
+        y = self.subtract_charge(x)
+        other_bar.add_charge(y)
 
     def update(self):
         self.image = self.images[self._idx()]
@@ -66,11 +84,13 @@ class ChargeBar(pygame.sprite.Sprite):
 class Player(pygame.sprite.Sprite):
     "Sprite representing the player"
     SPEED = 250  # in pixels/second
+    CHARGE_PER_TRANSFER = 10
+    CAPACITY = 50
 
     def __init__(self, npcs, group=None):
         super().__init__([group] if group is not None else [])
         self.npcs = npcs
-        self.transfer_charge = False
+        self.transfer_charge = False  # flag to indicate next update() should charge
         self.image = asset("Player")
         self.image.set_colorkey(WHITE)
         self.rect = (
@@ -80,7 +100,7 @@ class Player(pygame.sprite.Sprite):
             DISP_WIDTH // 2,
             DISP_HEIGHT // 2,
         )  # move the center to display center
-        self.chargebar = ChargeBar(parent=self, group=group)
+        self.chargebar = ChargeBar(parent=self, group=group, max=self.CAPACITY)
 
     def update(self):
         pressed_keys = pygame.key.get_pressed()
@@ -101,10 +121,9 @@ class Player(pygame.sprite.Sprite):
         if self.transfer_charge:
             self.transfer_charge = False
             # Detect collisions with anything in sprite group self.npcs
-            colliders = pygame.sprite.spritecollide(self, self.npcs, dokill=False)
-            for c in colliders:
-                c.chargebar.add_charge(10)
-                self.chargebar.subtract_charge(10)
+            c = pygame.sprite.spritecollideany(self, self.npcs)
+            if c is not None:
+                self.chargebar.transfer_charge(c.chargebar, self.CHARGE_PER_TRANSFER)
 
     # draw should accept a surface and put this sprite onto it
     def draw(self, surface):
