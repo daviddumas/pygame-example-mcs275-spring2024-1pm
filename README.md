@@ -9,4 +9,4 @@ python3 main.py
 ```
 ## Contributors
 
-* David Dumas <ddumas@uic.edu>
+* Emily Dumas <ddumas@uic.edu>

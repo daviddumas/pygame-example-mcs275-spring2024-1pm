@@ -1,3 +1,5 @@
+# MCS 275 Spring 2024
+# Emily Dumas
 import pygame
 import sys
 from pygame.locals import K_LEFT, K_RIGHT, K_UP, K_DOWN, QUIT
